@@ -1,4 +1,5 @@
 import numpy as np
+from timedistribution import TimeDistributionCalculator
 
 class ConvLSTM2DCell:
     def __init__(self, in_channels, out_channels, kernel_size, padding, stride, leaky_relu_slope):
@@ -9,6 +10,7 @@ class ConvLSTM2DCell:
         self.stride = stride
         self.leaky_relu_slope = leaky_relu_slope
         self.weights = self._init_weights()
+
 
     def _init_weights(self):
         weights = {}
@@ -57,4 +59,5 @@ class ConvLSTM2D:
             h, c = self.cells[0].forward(x[:, i, :, :, :], h, c)
             outputs.append(h)
         outputs = np.stack(outputs, axis=1)
+        outputs = TimeDistributionCalculator.apply_dropout(outputs)
         return outputs 
